@@ -1,0 +1,4 @@
+id,name,model_id/id,group_id/id,operation,domain
+access_workshop_order_technician,workshop.order technician,workshop_service.model_workshop_order,workshop_service.group_workshop_technician,cru,
+access_workshop_order_supervisor,workshop.order supervisor,workshop_service.model_workshop_order,workshop_service.group_workshop_supervisor,cru,
+access_workshop_order_manager,workshop.order manager,workshop_service.model_workshop_order,workshop_service.group_workshop_manager,crud,

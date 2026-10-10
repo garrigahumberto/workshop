@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_workshop_root"
+        name="Taller"
+        sequence="50"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_orders"
+        name="Órdenes de trabajo"
+        parent="menu_workshop_root"
+        action="action_workshop_orders"
+        sequence="10"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+    />
+</odoo>

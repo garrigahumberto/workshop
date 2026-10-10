@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_workshop_technician" model="res.groups">
+        <field name="name">Técnico de taller</field>
+    </record>
+    <record id="group_workshop_supervisor" model="res.groups">
+        <field name="name">Supervisor de taller</field>
+    </record>
+    <record id="group_workshop_procedure_manager" model="res.groups">
+        <field name="name">Gestor de procedimientos</field>
+    </record>
+    <record id="group_workshop_manager" model="res.groups">
+        <field name="name">Administrador del módulo</field>
+    </record>
+</odoo>
