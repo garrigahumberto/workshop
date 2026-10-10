@@ -1,5 +1,6 @@
 from psycopg2 import IntegrityError
 
+from odoo.exceptions import UserError
 from odoo.tests import TransactionCase
 
 
@@ -78,3 +79,34 @@ class TestWorkshopProcedure(TransactionCase):
                 self.env['workshop.procedure.version'].create({
                     'procedure_id': 999999999,
                 })
+
+    def test_version_number_is_immutable(self):
+        procedure = self.env['workshop.procedure'].create({
+            'name': 'Procedimiento inmutable',
+            'code': 'TEST-IMMUTABLE-NUMBER',
+        })
+        version = self.env['workshop.procedure.version'].create({
+            'procedure_id': procedure.id,
+        })
+
+        with self.assertRaises(UserError):
+            version.write({'version_number': 99})
+
+    def test_version_procedure_is_immutable(self):
+        Procedure = self.env['workshop.procedure']
+        Version = self.env['workshop.procedure.version']
+
+        procedure_a = Procedure.create({
+            'name': 'Procedimiento A',
+            'code': 'TEST-IMMUTABLE-PROC-A',
+        })
+        procedure_b = Procedure.create({
+            'name': 'Procedimiento B',
+            'code': 'TEST-IMMUTABLE-PROC-B',
+        })
+        version = Version.create({
+            'procedure_id': procedure_a.id,
+        })
+
+        with self.assertRaises(UserError):
+            version.write({'procedure_id': procedure_b.id})

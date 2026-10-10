@@ -1,4 +1,5 @@
 from odoo import api, fields, models
+from odoo.exceptions import UserError
 
 
 class WorkshopProcedure(models.Model):
@@ -70,6 +71,28 @@ class WorkshopProcedureVersion(models.Model):
     change_summary = fields.Text(
         string='Resumen de cambios',
     )
+
+    def write(self, vals):
+        if 'version_number' in vals:
+            if any(
+                version.version_number != vals['version_number']
+                for version in self
+            ):
+                raise UserError(
+                    'No se puede modificar el número de una versión existente.'
+                )
+
+        if 'procedure_id' in vals:
+            if any(
+                version.procedure_id.id != vals['procedure_id']
+                for version in self
+            ):
+                raise UserError(
+                    'No se puede cambiar el procedimiento propietario '
+                    'de una versión existente.'
+                )
+
+        return super().write(vals)
 
     @api.model_create_multi
     def create(self, vals_list):
