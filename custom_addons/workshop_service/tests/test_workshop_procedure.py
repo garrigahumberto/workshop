@@ -69,8 +69,8 @@ class TestWorkshopProcedure(TransactionCase):
         })
 
         self.assertEqual(version.state, 'preparation')
-        self.assertEqual(version.created_by, self.env.user)
-        self.assertTrue(version.created_at)
+        self.assertEqual(version.create_uid, self.env.user)
+        self.assertTrue(version.create_date)
 
     def test_version_requires_existing_procedure(self):
         with self.assertRaises(IntegrityError):

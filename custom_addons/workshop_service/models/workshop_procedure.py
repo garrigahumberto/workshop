@@ -67,21 +67,6 @@ class WorkshopProcedureVersion(models.Model):
         default='preparation',
         copy=False,
     )
-    created_by = fields.Many2one(
-        'res.users',
-        string='Creado por',
-        required=True,
-        default=lambda self: self.env.user,
-        readonly=True,
-        copy=False,
-    )
-    created_at = fields.Datetime(
-        string='Fecha de creación',
-        required=True,
-        default=fields.Datetime.now,
-        readonly=True,
-        copy=False,
-    )
     change_summary = fields.Text(
         string='Resumen de cambios',
     )
