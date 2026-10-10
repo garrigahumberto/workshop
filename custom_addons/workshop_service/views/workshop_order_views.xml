@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_workshop_order_list" model="ir.ui.view">
+        <field name="name">workshop.order.list</field>
+        <field name="model">workshop.order</field>
+        <field name="arch" type="xml">
+            <list string="Órdenes de trabajo">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="priority" widget="priority"/>
+                <field name="state"/>
+                <field name="request_date"/>
+                <field name="promised_date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_workshop_order_form" model="ir.ui.view">
+        <field name="name">workshop.order.form</field>
+        <field name="model">workshop.order</field>
+        <field name="arch" type="xml">
+            <form string="Orden de trabajo">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="priority" widget="priority"/>
+                            <field name="request_date"/>
+                            <field name="promised_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Solicitud">
+                            <field name="description"/>
+                        </page>
+                        <page string="Diagnóstico">
+                            <field name="diagnosis"/>
+                        </page>
+                        <page string="Notas internas">
+                            <field name="internal_notes"/>
+                        </page>
+                        <page string="Cancelación">
+                            <field name="cancellation_reason"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_workshop_orders" model="ir.actions.act_window">
+        <field name="name">Órdenes de trabajo</field>
+        <field name="res_model">workshop.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
