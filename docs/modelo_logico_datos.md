@@ -251,7 +251,6 @@ Una orden puede tener varias aplicaciones de procedimientos.
 | `estimated_minutes` | Float | Tiempo estimado, cuando corresponda. |
 | `actual_minutes` | Float | Tiempo real requerido para servicios o mano de obra valorados por tiempo. |
 | `valuation_method` | Selection | Método de valoración aplicado a servicios o mano de obra. |
-| `reference_unit_price` | Monetary | Precio de referencia aplicable a la línea al incorporarla a la orden, cuando corresponda. |
 | `applied_unit_price` | Monetary | Precio unitario acordado y aplicado a la orden, cuando corresponda. |
 | `currency_id` | Many2one → `res.currency` | Moneda de los importes registrados. |
 | `state` | Selection | Pendiente, realizada o no aplicable, según corresponda al tipo de línea. |
