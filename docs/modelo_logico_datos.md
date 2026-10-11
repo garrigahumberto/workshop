@@ -166,31 +166,51 @@ Las líneas no se almacenan directamente en este modelo: pertenecen a una versi�
 
 ### 4.6. `workshop.procedure.line` — Línea de procedimiento
 
-**Responsabilidad:** definir una instrucción de una versión concreta.
+**Responsabilidad:** definir un elemento previsto en una versión concreta e inmutable de un procedimiento.
+
+**Tipos de línea:**
+
+- `operation`: operación o tarea técnica.
+- `component`: componente o repuesto.
+- `consumable`: consumible.
+- `service_labor`: servicio o mano de obra.
+- `quality_test`: prueba de calidad.
+- `subprocedure`: subprocedimiento.
 
 Campos esenciales:
 
-* `version_id`: versión propietaria.
-* `sequence`: orden de presentación o ejecución.
-* `line_type`: operación, material, servicio, mano de obra, prueba de calidad o subprocedimiento.
-* `name`: descripción breve.
-* `description`: instrucciones detalladas.
-* `required`: indica si la línea es obligatoria.
-* `product_id`: producto estándar de Odoo, cuando corresponda.
-* `quantity`: cantidad prevista.
-* `product_uom_id`: unidad de medida.
-* `estimated_minutes`: tiempo estimado, si aplica.
-* `subprocedure_version_id`: versión concreta del subprocedimiento.
-* Parámetros de calidad necesarios para definir si una prueba es obligatoria o bloqueante.
+- `version_id`: versión propietaria.
+- `sequence`: orden de presentación.
+- `line_type`: tipo de línea según la clasificación anterior.
+- `name`: descripción breve.
+- `description`: instrucciones o notas detalladas.
+- `required`: indica si la línea es obligatoria.
+- `product_category_id`: categoría estándar de producto, cuando corresponda; permite definir una necesidad genérica.
+- `product_id`: producto estándar de Odoo, opcional cuando el procedimiento prescribe una referencia concreta.
+- `quantity`: cantidad prevista.
+- `product_uom_id`: unidad de medida.
+- `estimated_minutes`: tiempo estimado, cuando corresponda.
+- `valuation_method`: método de valoración de servicios o mano de obra: precio fijo o tiempo real por tarifa.
+- `reference_price`: precio de venta de referencia para servicios o mano de obra, cuando corresponda.
+- `reference_hourly_rate`: tarifa horaria de referencia cuando se utiliza valoración por tiempo.
+- `alternative_product_ids`: productos alternativos expresamente preautorizados, cuando corresponda.
+- `subprocedure_version_id`: versión concreta del subprocedimiento.
+- Parámetros de calidad necesarios para identificar si una prueba es obligatoria o bloqueante.
+
+Los campos específicos de valoración solo se aplican a las líneas de servicio o mano de obra. Para componentes y consumibles, el precio de referencia comercial se determina al seleccionar el producto concreto, conforme a las reglas comerciales de Odoo.
+
+Una línea puede describir una necesidad genérica sin fijar marca o referencia comercial. El producto concreto se selecciona durante la ejecución, respetando las alternativas preautorizadas y los permisos aplicables.
 
 #### Validaciones
 
-* Las unidades de medida deben ser compatibles con el producto.
-* Los tipos de línea deben tener los campos obligatorios que les correspondan.
-* Una línea de subprocedimiento debe apuntar a una versión publicada concreta.
-* Deben impedirse referencias circulares entre procedimientos compuestos.
-* No se implementarán reglas condicionales avanzadas en el MVP.
-* Las diferencias de comportamiento entre tipos de línea se resolverán mediante validaciones claras, sin crear un modelo independiente por cada tipo salvo necesidad demostrada.
+- Los campos obligatorios dependen del tipo de línea.
+- Las unidades de medida deben ser compatibles con el producto concreto, cuando exista.
+- Las líneas de servicio o mano de obra deben identificar el método de valoración y disponer de los datos de referencia que ese método requiera.
+- Las alternativas deben corresponder a productos compatibles con la necesidad definida.
+- Una línea de subprocedimiento debe apuntar a una versión publicada concreta.
+- Deben impedirse las referencias circulares entre procedimientos compuestos.
+- No se implementarán reglas condicionales avanzadas en el MVP.
+- Las diferencias entre tipos de línea se resolverán mediante validaciones claras, sin crear un modelo independiente por tipo salvo necesidad demostrada.
 
 ### 4.7. `workshop.order.procedure` — Aplicación de procedimiento
 
@@ -212,39 +232,44 @@ Una orden puede tener varias aplicaciones de procedimientos.
 
 ### 4.8. `workshop.order.line` — Línea ejecutable
 
-**Responsabilidad:** representar una instrucción aplicada a la orden y registrar su ejecución real.
+**Responsabilidad:** representar un elemento aplicado a una orden, conservar su procedencia y registrar los datos reales necesarios para la ejecución técnica, logística y comercial.
 
-| Campo                      | Tipo                                  | Regla o finalidad                                    |
-| -------------------------- | ------------------------------------- | ---------------------------------------------------- |
-| `order_id`                 | Many2one → `workshop.order`           | Orden propietaria.                                   |
-| `procedure_application_id` | Many2one → `workshop.order.procedure` | Aplicación de origen, opcional para líneas manuales. |
-| `source_procedure_line_id` | Many2one → `workshop.procedure.line`  | Referencia de procedencia.                           |
-| `sequence`                 | Integer                               | Orden de ejecución.                                  |
-| `line_type`                | Selection                             | Tipo de instrucción.                                 |
-| `name` / `description`     | Char / Text                           | Copia de la descripción aplicada.                    |
-| `required`                 | Boolean                               | Obligatoriedad copiada.                              |
-| `product_id`               | Many2one → `product.product`          | Producto, cuando corresponda.                        |
-| `product_uom_id`           | Many2one → `uom.uom`                  | Unidad de medida.                                    |
-| `planned_quantity`         | Float                                 | Cantidad prevista.                                   |
-| `actual_quantity`          | Float                                 | Cantidad real.                                       |
-| `estimated_minutes`        | Float                                 | Tiempo previsto, si aplica.                          |
-| `actual_minutes`           | Float                                 | Tiempo real, cuando corresponda.                     |
-| `state`                    | Selection                             | Pendiente, realizada o no aplicable.                 |
-| `assigned_user_id`         | Many2one → `res.users`                | Técnico asignado, si corresponde.                    |
-| `started_at`               | Datetime                              | Inicio de ejecución, cuando se registre.             |
-| `completed_at`             | Datetime                              | Finalización.                                        |
-| `not_applicable_reason`    | Text                                  | Motivo cuando no se realiza una línea.               |
+| Campo | Tipo | Regla o finalidad |
+|---|---|---|
+| `order_id` | Many2one → `workshop.order` | Orden propietaria. |
+| `procedure_application_id` | Many2one → `workshop.order.procedure` | Aplicación de origen; opcional para líneas manuales. |
+| `source_procedure_line_id` | Many2one → `workshop.procedure.line` | Línea de procedencia, cuando corresponda. |
+| `sequence` | Integer | Orden de presentación o ejecución. |
+| `line_type` | Selection | Operación, componente, consumible, servicio/mano de obra, prueba de calidad o subprocedimiento. |
+| `name` / `description` | Char / Text | Copia de la descripción aplicada. |
+| `required` | Boolean | Obligatoriedad copiada. |
+| `product_id` | Many2one → `product.product` | Producto concreto seleccionado o utilizado, cuando corresponda. |
+| `product_category_id` | Many2one → `product.category` | Categoría de referencia cuando corresponda. |
+| `product_uom_id` | Many2one → `uom.uom` | Unidad de medida. |
+| `planned_quantity` | Float | Cantidad prevista. |
+| `actual_quantity` | Float | Cantidad real registrada. |
+| `estimated_minutes` | Float | Tiempo estimado, cuando corresponda. |
+| `actual_minutes` | Float | Tiempo real requerido para servicios o mano de obra valorados por tiempo. |
+| `valuation_method` | Selection | Método de valoración aplicado a servicios o mano de obra. |
+| `reference_unit_price` | Monetary | Precio de referencia aplicable a la línea al incorporarla a la orden, cuando corresponda. |
+| `applied_unit_price` | Monetary | Precio unitario acordado y aplicado a la orden, cuando corresponda. |
+| `currency_id` | Many2one → `res.currency` | Moneda de los importes registrados. |
+| `state` | Selection | Pendiente, realizada o no aplicable, según corresponda al tipo de línea. |
+| `not_applicable_reason` | Text | Motivo cuando una línea se declara no aplicable. |
 
-Los campos de sustitución y autorización se añadirán a esta estructura cuando corresponda a la línea y al flujo definido.
+La implementación detallará los campos auxiliares necesarios para registrar sustituciones autorizadas y la trazabilidad de los productos efectivamente utilizados, sin modificar el procedimiento publicado.
 
 #### Reglas
 
-* Los datos funcionales aplicados son una instantánea. Los cambios en la plantilla no los actualizan.
-* La cantidad real puede diferir de la prevista conforme a los requisitos cerrados.
-* Las líneas ejecutadas no se eliminan para corregir errores.
-* Una línea manual debe poder identificarse como tal y no fingir que procede de un procedimiento.
-* La ejecución técnica no genera automáticamente cargos comerciales.
-* Las relaciones con movimientos de inventario deben identificar la operación física correspondiente sin duplicar sus datos.
+- Los datos funcionales aplicados se conservan como instantánea; los cambios en la plantilla no los actualizan.
+- El producto concreto puede elegirse durante la ejecución cuando la receta sea genérica.
+- La selección de una alternativa debe respetar las autorizaciones aplicables y conservar la trazabilidad de lo utilizado.
+- La cantidad real puede diferir de la prevista, incluso superarla, sin autorización adicional por ese único motivo.
+- El tiempo real se registra cuando es necesario para valorar un servicio o mano de obra por tiempo; no se exige registrar inicio, fin, duración ni responsable individual para cada operación en el MVP.
+- Las líneas manuales deben identificarse como tales y no fingir una procedencia de procedimiento.
+- El precio aplicado representa el precio acordado vigente en la orden y puede modificarse antes de confirmar la factura correspondiente. La modificación no altera el catálogo ni el procedimiento publicado. Una vez confirmada la factura, el precio facturado queda sujeto al flujo contable de Odoo.
+- La ejecución técnica no genera automáticamente cargos comerciales.
+- Los movimientos de inventario representan operaciones físicas y deben mantener su propia trazabilidad, sin duplicar sus datos en la línea ejecutable.
 
 ### 4.9. `workshop.quality.attempt` — Intento de prueba de calidad
 
