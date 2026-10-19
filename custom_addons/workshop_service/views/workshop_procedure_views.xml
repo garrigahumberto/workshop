@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Procedimientos -->
+    <record id="view_workshop_procedure_list" model="ir.ui.view">
+        <field name="name">workshop.procedure.list</field>
+        <field name="model">workshop.procedure</field>
+        <field name="arch" type="xml">
+            <list string="Procedimientos">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="published_version_id"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_workshop_procedure_form" model="ir.ui.view">
+        <field name="name">workshop.procedure.form</field>
+        <field name="model">workshop.procedure</field>
+        <field name="arch" type="xml">
+            <form string="Procedimiento">
+                <header>
+                    <button name="action_new_version" type="object" string="Nueva versión"
+                            class="btn-primary" invisible="not id"
+                            groups="workshop_service.group_workshop_procedure_manager"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="published_version_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Descripción" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Versiones" name="versions">
+                            <field name="version_ids" readonly="1">
+                                <list>
+                                    <field name="version_number"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="change_summary"/>
+                                    <field name="published_by"/>
+                                    <field name="published_at"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_workshop_procedures" model="ir.actions.act_window">
+        <field name="name">Procedimientos</field>
+        <field name="res_model">workshop.procedure</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Versiones -->
+    <record id="view_workshop_procedure_version_list" model="ir.ui.view">
+        <field name="name">workshop.procedure.version.list</field>
+        <field name="model">workshop.procedure.version</field>
+        <field name="arch" type="xml">
+            <list string="Versiones de procedimientos"
+                  decoration-muted="state == 'retired'" decoration-info="state == 'preparation'">
+                <field name="procedure_id"/>
+                <field name="version_number"/>
+                <field name="state" widget="badge"/>
+                <field name="change_summary"/>
+                <field name="published_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_workshop_procedure_version_form" model="ir.ui.view">
+        <field name="name">workshop.procedure.version.form</field>
+        <field name="model">workshop.procedure.version</field>
+        <field name="arch" type="xml">
+            <form string="Versión de procedimiento">
+                <header>
+                    <button name="action_publish" type="object" string="Publicar"
+                            class="btn-primary" invisible="state != 'preparation' or not id"
+                            groups="workshop_service.group_workshop_procedure_manager"/>
+                    <button name="action_retire" type="object" string="Retirar"
+                            invisible="state != 'published'"
+                            confirm="Una versión retirada ya no podrá aplicarse a nuevas órdenes."
+                            groups="workshop_service.group_workshop_procedure_manager"/>
+                    <button name="action_create_new_version" type="object" string="Crear nueva versión"
+                            invisible="state == 'preparation'"
+                            groups="workshop_service.group_workshop_procedure_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="procedure_id" readonly="id"/>
+                            <field name="version_number"/>
+                        </group>
+                        <group>
+                            <field name="published_by"/>
+                            <field name="published_at"/>
+                            <field name="retired_by" invisible="state != 'retired'"/>
+                            <field name="retired_at" invisible="state != 'retired'"/>
+                        </group>
+                    </group>
+                    <field name="change_summary" placeholder="Resumen de cambios de esta versión..."
+                           readonly="state != 'preparation'"/>
+                    <notebook>
+                        <page string="Líneas" name="lines">
+                            <field name="line_ids" readonly="state != 'preparation'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="line_type"/>
+                                    <field name="name"/>
+                                    <field name="required"/>
+                                    <field name="product_category_id"/>
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="subprocedure_version_id"
+                                           domain="[('state', '=', 'published')]"
+                                           options="{'no_create': True}"/>
+                                    <field name="estimated_minutes" optional="hide"/>
+                                    <field name="valuation_method" optional="hide"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="reference_price" optional="hide"/>
+                                    <field name="reference_hourly_rate" optional="hide"/>
+                                    <field name="is_blocking" optional="hide"/>
+                                    <field name="alternative_product_ids" widget="many2many_tags" optional="hide"/>
+                                    <field name="description" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_workshop_procedure_versions" model="ir.actions.act_window">
+        <field name="name">Versiones de procedimientos</field>
+        <field name="res_model">workshop.procedure.version</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

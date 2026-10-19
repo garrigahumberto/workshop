@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Técnico: ejecuta trabajos, registra diagnóstico y consumos. -->
     <record id="group_workshop_technician" model="res.groups">
         <field name="name">Técnico de taller</field>
     </record>
+    <!-- Vendedor: gestiona órdenes y precios sin permisos de ejecución técnica. -->
+    <record id="group_workshop_salesperson" model="res.groups">
+        <field name="name">Vendedor de taller</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <!-- Supervisor: gestiona órdenes y autoriza operaciones; incluye al técnico. -->
     <record id="group_workshop_supervisor" model="res.groups">
         <field name="name">Supervisor de taller</field>
+        <field name="implied_ids" eval="[(4, ref('group_workshop_technician'))]"/>
     </record>
+    <!-- Gestor de procedimientos: crea, publica y retira procedimientos. -->
     <record id="group_workshop_procedure_manager" model="res.groups">
         <field name="name">Gestor de procedimientos</field>
     </record>
+    <!-- Administrador del módulo: incluye supervisor y gestor de procedimientos. -->
     <record id="group_workshop_manager" model="res.groups">
         <field name="name">Administrador del módulo</field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_workshop_supervisor')),
+            (4, ref('group_workshop_procedure_manager')),
+        ]"/>
     </record>
 </odoo>

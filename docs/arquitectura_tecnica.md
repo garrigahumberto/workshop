@@ -216,11 +216,13 @@ La seguridad se implementará desde el inicio. No se dejará como una tarea fina
 | Grupo                    | Responsabilidad principal                                                               |
 | ------------------------ | --------------------------------------------------------------------------------------- |
 | Técnico de taller        | Consultar órdenes asignadas y registrar ejecución, cantidades y pruebas según permisos. |
+| Vendedor de taller       | Gestionar órdenes y precios, y registrar la aceptación comercial del presupuesto.       |
 | Supervisor de taller     | Gestionar órdenes y autorizar operaciones de su ámbito.                                 |
 | Gestor de procedimientos | Crear, modificar, validar, publicar y retirar procedimientos según permisos.            |
 | Administrador del módulo | Configuración y administración técnica del módulo.                                      |
 
 La pertenencia a varios grupos debe funcionar de forma coherente con los permisos estándar de Odoo.
+El grupo de vendedor de taller es complementario al grupo estándar de usuario de ventas; ambos deben asignarse al vendedor.
 
 ### 6.2. Reglas obligatorias
 

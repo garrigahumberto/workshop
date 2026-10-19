@@ -4,7 +4,7 @@
         id="menu_workshop_root"
         name="Taller"
         sequence="50"
-        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_salesperson,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_procedure_manager,workshop_service.group_workshop_manager"
     />
     <menuitem
         id="menu_workshop_orders"
@@ -12,6 +12,45 @@
         parent="menu_workshop_root"
         action="action_workshop_orders"
         sequence="10"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_salesperson,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_equipment"
+        name="Equipos"
+        parent="menu_workshop_root"
+        action="action_workshop_equipment"
+        sequence="20"
         groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_procedures"
+        name="Procedimientos"
+        parent="menu_workshop_root"
+        action="action_workshop_procedures"
+        sequence="30"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_procedure_manager,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_procedure_versions"
+        name="Versiones"
+        parent="menu_workshop_root"
+        action="action_workshop_procedure_versions"
+        sequence="35"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_procedure_manager,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_config"
+        name="Configuración"
+        parent="menu_workshop_root"
+        sequence="90"
+        groups="workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_repair_types"
+        name="Tipos de reparación"
+        parent="menu_workshop_config"
+        action="action_workshop_repair_types"
+        sequence="10"
+        groups="workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
     />
 </odoo>
