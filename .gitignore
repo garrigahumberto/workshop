@@ -225,3 +225,6 @@ __marimo__/
 
 # OpenCode files
 .opencode/*
+
+# Temporary project information
+/.temp/

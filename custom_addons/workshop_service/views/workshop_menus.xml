@@ -4,7 +4,7 @@
         id="menu_workshop_root"
         name="Taller"
         sequence="50"
-        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+        groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_procedure_manager,workshop_service.group_workshop_warehouse,workshop_service.group_workshop_manager"
     />
     <menuitem
         id="menu_workshop_orders"
@@ -13,5 +13,29 @@
         action="action_workshop_orders"
         sequence="10"
         groups="workshop_service.group_workshop_technician,workshop_service.group_workshop_supervisor,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_procedures"
+        name="Procedimientos"
+        parent="menu_workshop_root"
+        action="action_workshop_procedures"
+        sequence="20"
+        groups="workshop_service.group_workshop_procedure_manager,workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_locations"
+        name="Tiendas y talleres"
+        parent="menu_workshop_root"
+        action="action_workshop_locations"
+        sequence="30"
+        groups="workshop_service.group_workshop_manager"
+    />
+    <menuitem
+        id="menu_workshop_allocations"
+        name="Asignaciones de gastables"
+        parent="menu_workshop_root"
+        action="action_workshop_consumable_allocations"
+        sequence="40"
+        groups="workshop_service.group_workshop_warehouse,workshop_service.group_workshop_manager"
     />
 </odoo>

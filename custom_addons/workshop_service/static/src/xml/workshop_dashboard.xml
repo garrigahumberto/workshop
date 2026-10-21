@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="workshop_service.WorkshopDashboard">
+        <div class="o_workshop_dashboard">
+            <div class="o_workshop_dashboard_header">
+                <div>
+                    <h1>Workshop</h1>
+                    <p>Centro de operaciones</p>
+                </div>
+                <span class="o_workshop_brand">
+                    <i class="fa fa-wrench me-2"/>
+                    Gestión de talleres
+                </span>
+            </div>
+
+            <div class="o_workshop_dashboard_content">
+                <div class="o_workshop_intro">
+                    <div>
+                        <h2>Resumen del negocio</h2>
+                        <p>
+                            Consulta la actividad y el estado de tus talleres.
+                        </p>
+                    </div>
+
+                    <div class="o_workshop_filters">
+                        <div class="o_workshop_date_range_filter">
+                            <label for="o_workshop_date_range">
+                                Periodo
+                            </label>
+                            <button
+                                id="o_workshop_date_range"
+                                type="button"
+                                class="form-control o_workshop_date_range_input"
+                                t-ref="this.dateRangeRef"
+                                t-on-click="this.openDateRangePicker"
+                            >
+                                <i class="fa fa-calendar me-2"/>
+                                <t t-esc="this.dateRangeLabel()"/>
+                            </button>
+                        </div>
+
+                        <label>
+                            Taller
+                            <select
+                                class="form-select"
+                                t-att-value="this.state.workshop"
+                                t-on-change="this.setWorkshop"
+                            >
+                                <option value="all">Todos los talleres</option>
+                                <option
+                                    t-foreach="this.state.data.locations"
+                                    t-as="location"
+                                    t-key="location.id"
+                                    t-att-value="location.id"
+                                >
+                                    <t t-out="location.name"/>
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div
+                    t-if="this.state.error"
+                    class="alert alert-danger mt-4"
+                    role="alert"
+                >
+                    <t t-out="this.state.error"/>
+                    <button
+                        type="button"
+                        class="btn btn-link"
+                        t-on-click="this.loadData"
+                    >
+                        Reintentar
+                    </button>
+                </div>
+
+                <div t-if="!this.state.error" class="o_workshop_stats">
+                    <div class="o_workshop_stat_card">
+                        <div class="o_workshop_stat_icon blue">
+                            <i class="fa fa-clipboard-list"/>
+                        </div>
+                        <span>Órdenes totales</span>
+                        <strong>
+                            <t t-if="this.state.loading">—</t>
+                            <t t-else=""><t t-out="this.state.data.metrics.total"/></t>
+                        </strong>
+                        <small>Recibidas en el periodo seleccionado</small>
+                    </div>
+
+                    <div class="o_workshop_stat_card">
+                        <div class="o_workshop_stat_icon amber">
+                            <i class="fa fa-clock-o"/>
+                        </div>
+                        <span>En proceso</span>
+                        <strong>
+                            <t t-if="this.state.loading">—</t>
+                            <t t-else=""><t t-out="this.state.data.metrics.open"/></t>
+                        </strong>
+                        <small>Abiertas y recibidas en el periodo</small>
+                    </div>
+
+                    <div class="o_workshop_stat_card">
+                        <div class="o_workshop_stat_icon green">
+                            <i class="fa fa-check-circle"/>
+                        </div>
+                        <span>Completadas</span>
+                        <strong>
+                            <t t-if="this.state.loading">—</t>
+                            <t t-else=""><t t-out="this.state.data.metrics.completed"/></t>
+                        </strong>
+                        <small>Cerradas en el periodo seleccionado</small>
+                    </div>
+
+                    <div class="o_workshop_stat_card">
+                        <div class="o_workshop_stat_icon red">
+                            <i class="fa fa-exclamation-circle"/>
+                        </div>
+                        <span>Vencidas</span>
+                        <strong>
+                            <t t-if="this.state.loading">—</t>
+                            <t t-else=""><t t-out="this.state.data.metrics.pending"/></t>
+                        </strong>
+                        <small>Abiertas con fecha prometida superada</small>
+                    </div>
+                </div>
+
+                <section
+                    t-if="!this.state.error"
+                    class="o_workshop_section"
+                >
+                    <div class="o_workshop_section_heading">
+                        <div>
+                            <h3>Talleres</h3>
+                            <p>Selecciona un taller para filtrar los indicadores</p>
+                        </div>
+                    </div>
+
+                    <div
+                        t-if="this.state.loading"
+                        class="o_workshop_empty_state"
+                    >
+                        <p>Cargando talleres…</p>
+                    </div>
+                    <div
+                        t-elif="!this.state.data.locations.length"
+                        class="o_workshop_empty_state"
+                    >
+                        <i class="fa fa-building-o"/>
+                        <h4>No hay talleres activos</h4>
+                        <p>Cuando registres un taller, aparecerá aquí.</p>
+                    </div>
+                    <div t-else="" class="o_workshop_locations">
+                        <button
+                            t-foreach="this.state.data.locations"
+                            t-as="location"
+                            t-key="location.id"
+                            type="button"
+                            t-att-class="this.workshopCardClass(location.id)"
+                            t-att-data-location-id="location.id"
+                            t-on-click="this.selectWorkshop"
+                        >
+                            <strong><t t-out="location.name"/></strong>
+                            <span>
+                                <t t-out="location.orders"/>
+                                órdenes recibidas en el periodo
+                            </span>
+                            <small>
+                                <t t-out="location.open"/> abiertas ·
+                                <t t-out="location.overdue"/> vencidas
+                            </small>
+                        </button>
+                    </div>
+                </section>
+
+                <section
+                    t-if="!this.state.error"
+                    class="o_workshop_section"
+                >
+                    <div class="o_workshop_section_heading">
+                        <div>
+                            <h3>Órdenes recientes</h3>
+                            <p>Recibidas durante el periodo seleccionado</p>
+                        </div>
+                        <button
+                            t-if="this.state.data.can_create_order"
+                            type="button"
+                            class="btn btn-primary"
+                            t-on-click="this.newOrder"
+                        >
+                            Nueva orden
+                        </button>
+                    </div>
+
+                    <div
+                        t-if="this.state.loading"
+                        class="o_workshop_empty_state"
+                    >
+                        <p>Cargando órdenes…</p>
+                    </div>
+                    <div
+                        t-elif="!this.state.data.recent_orders.length"
+                        class="o_workshop_empty_state"
+                    >
+                        <i class="fa fa-clipboard"/>
+                        <h4>No hay órdenes en este periodo</h4>
+                    </div>
+                    <div t-else="" class="o_workshop_recent_orders">
+                        <button
+                            t-foreach="this.state.data.recent_orders"
+                            t-as="order"
+                            t-key="order.id"
+                            type="button"
+                            class="o_workshop_recent_order"
+                            t-on-click="() => this.openOrder(order.id)"
+                        >
+                            <span class="o_workshop_recent_order_main">
+                                <strong><t t-out="order.name"/></strong>
+                                <span>
+                                    <t t-out="order.partner"/>
+                                    <t t-if="order.equipment"> · <t t-out="order.equipment"/></t>
+                                </span>
+                            </span>
+                            <span class="o_workshop_recent_order_location">
+                                <t t-out="order.location"/>
+                            </span>
+                            <span class="o_workshop_recent_order_state">
+                                <t t-out="order.state"/>
+                            </span>
+                            <small><t t-out="order.request_date"/></small>
+                        </button>
+                    </div>
+                </section>
+
+                <section
+                    t-if="!this.state.error"
+                    class="o_workshop_section"
+                >
+                    <h3>Accesos rápidos</h3>
+                    <div class="o_workshop_quick_actions">
+                        <button
+                            t-if="this.state.data.can_create_order"
+                            type="button"
+                            class="o_workshop_action_card"
+                            t-on-click="this.newOrder"
+                        >
+                            <i class="fa fa-plus-circle"/>
+                            <span>Nueva orden</span>
+                            <small>Crear una orden de trabajo</small>
+                        </button>
+                        <button
+                            t-if="this.state.data.can_read_orders"
+                            type="button"
+                            class="o_workshop_action_card"
+                            t-on-click="this.openOrders"
+                        >
+                            <i class="fa fa-search"/>
+                            <span>Buscar orden</span>
+                            <small>Consultar órdenes existentes</small>
+                        </button>
+                        <button
+                            t-if="this.state.data.can_manage_locations"
+                            type="button"
+                            class="o_workshop_action_card"
+                            t-on-click="this.openLocations"
+                        >
+                            <i class="fa fa-building"/>
+                            <span>Gestionar talleres</span>
+                            <small>Consultar los talleres del negocio</small>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -4,16 +4,42 @@
         <field name="name">workshop.order.list</field>
         <field name="model">workshop.order</field>
         <field name="arch" type="xml">
-            <list string="Órdenes de trabajo">
+            <list string="Órdenes de servicio">
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="user_id"/>
-                <field name="priority" widget="priority"/>
+                <field name="equipment_name"/>
+                <field name="location_id"/>
+                <field name="received_by_id"/>
+                <field name="technician_id"/>
                 <field name="state"/>
                 <field name="request_date"/>
-                <field name="promised_date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_workshop_order_search" model="ir.ui.view">
+        <field name="name">workshop.order.search</field>
+        <field name="model">workshop.order</field>
+        <field name="arch" type="xml">
+            <search string="Buscar órdenes">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="location_id"/>
+                <field name="received_by_id"/>
+                <field name="technician_id"/>
+                <field name="equipment_name"/>
+                <filter name="open_orders" string="Abiertas" domain="[('state', '=', 'open')]"/>
+                <filter name="closed_orders" string="Cerradas" domain="[('state', '=', 'closed')]"/>
+                <filter name="cancelled_orders" string="Canceladas" domain="[('state', '=', 'cancelled')]"/>
+                <filter name="archived_orders" string="Archivadas" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="group_location" string="Ubicación" context="{'group_by': 'location_id'}"/>
+                    <filter name="group_state" string="Estado" context="{'group_by': 'state'}"/>
+                    <filter name="group_received_by" string="Atendido por" context="{'group_by': 'received_by_id'}"/>
+                    <filter name="group_technician" string="Técnico" context="{'group_by': 'technician_id'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -21,9 +47,22 @@
         <field name="name">workshop.order.form</field>
         <field name="model">workshop.order</field>
         <field name="arch" type="xml">
-            <form string="Orden de trabajo">
+            <form string="Orden de servicio">
                 <header>
-                    <field name="state" widget="statusbar"/>
+                    <button name="action_close" type="object" string="Cerrar"
+                            class="btn-primary" invisible="state != 'open'"/>
+                    <button name="action_cancel" type="object" string="Cancelar"
+                            invisible="state != 'open'"/>
+                    <button name="action_reopen" type="object" string="Reabrir"
+                            invisible="state != 'closed'"/>
+                    <button name="action_archive" type="object" string="Archivar"
+                            groups="workshop_service.group_workshop_manager"
+                            invisible="not active"/>
+                    <button name="action_unarchive" type="object" string="Restaurar"
+                            groups="workshop_service.group_workshop_manager"
+                            invisible="active"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,closed,cancelled"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -32,28 +71,91 @@
                     </div>
                     <group>
                         <group>
-                            <field name="partner_id"/>
-                            <field name="user_id"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="partner_id" readonly="state != 'open'"/>
+                            <field name="origin" readonly="state != 'open'"/>
+                            <field name="location_id" required="1"
+                                   readonly="state != 'open'"/>
+                            <field name="received_by_id" readonly="state != 'open'"/>
+                            <field name="technician_id" readonly="state != 'open'"/>
                         </group>
                         <group>
-                            <field name="priority" widget="priority"/>
+                            <field name="equipment_name" readonly="state != 'open'"/>
+                            <field name="equipment_identifier" readonly="state != 'open'"/>
                             <field name="request_date"/>
-                            <field name="promised_date"/>
+                            <field name="promised_date" readonly="state != 'open'"/>
+                            <field name="budget_amount" readonly="state != 'open'"/>
+                            <field name="currency_id" readonly="state != 'open'"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Solicitud">
-                            <field name="description"/>
+                        <page string="Servicio">
+                            <group>
+                                <field name="description" readonly="state != 'open'"/>
+                                <field name="diagnosis" readonly="state != 'open'"/>
+                                <field name="work_summary" readonly="state != 'open'"/>
+                                <field name="cancellation_reason"
+                                       invisible="state != 'open'"/>
+                            </group>
+                            <group string="Aplicar procedimiento" invisible="state != 'open'">
+                                <field name="procedure_to_apply_id"/>
+                                <button name="action_apply_procedure" type="object"
+                                        string="Aplicar" class="btn-secondary"/>
+                            </group>
+                            <field name="line_ids" readonly="state != 'open'">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="line_type"/>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="planned_quantity"/>
+                                    <field name="actual_quantity"/>
+                                    <field name="uom_id"/>
+                                    <field name="state"/>
+                                    <field name="performed_by_id"
+                                           invisible="line_type != 'labor'"/>
+                                    <field name="sale_order_line_id"/>
+                                    <field name="stock_move_id"/>
+                                    <field name="allocation_id"
+                                           invisible="line_type != 'consumable'"/>
+                                </list>
+                            </field>
+                            <field name="application_ids" readonly="1">
+                                <list>
+                                    <field name="procedure_name"/>
+                                    <field name="procedure_code"/>
+                                    <field name="procedure_revision"/>
+                                    <field name="applied_by_id"/>
+                                    <field name="applied_at"/>
+                                </list>
+                            </field>
                         </page>
-                        <page string="Diagnóstico">
-                            <field name="diagnosis"/>
+                        <page string="Documentos comerciales">
+                            <field name="sale_order_ids" widget="many2many_tags"
+                                   readonly="state != 'open'"/>
                         </page>
-                        <page string="Notas internas">
-                            <field name="internal_notes"/>
+                        <page string="Historial">
+                            <field name="event_ids" readonly="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="event_date"/>
+                                    <field name="event_type"/>
+                                    <field name="follow_up_type"/>
+                                    <field name="reason"/>
+                                    <field name="user_id"/>
+                                </list>
+                            </field>
                         </page>
-                        <page string="Cancelación">
-                            <field name="cancellation_reason"/>
+                        <page string="Cancelación / reapertura"
+                              invisible="state == 'open'">
+                            <group>
+                                <field name="cancellation_reason"
+                                       readonly="state != 'open'"/>
+                                <field name="reopen_reason"
+                                       readonly="state != 'closed'"/>
+                                <field name="follow_up_type"
+                                       readonly="state != 'closed'"/>
+                                <field name="closed_at"/>
+                                <field name="cancelled_at"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
@@ -62,8 +164,10 @@
     </record>
 
     <record id="action_workshop_orders" model="ir.actions.act_window">
-        <field name="name">Órdenes de trabajo</field>
+        <field name="name">Órdenes de servicio</field>
         <field name="res_model">workshop.order</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_workshop_order_search"/>
+        <field name="context">{'active_test': False}</field>
     </record>
 </odoo>

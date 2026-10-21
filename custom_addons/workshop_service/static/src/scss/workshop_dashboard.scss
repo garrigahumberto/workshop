@@ -1,0 +1,344 @@
+
+.o_workshop_dashboard {
+    min-height: 100%;
+    background: #f4f6f9;
+    color: #253247;
+    padding-bottom: 32px;
+
+    .o_workshop_dashboard_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 28px 32px;
+        background: #202b3c;
+        color: white;
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        p {
+            margin: 5px 0 0;
+            color: #c5cfdd;
+        }
+    }
+
+    .o_workshop_brand {
+        font-size: 14px;
+        color: #dce6f4;
+    }
+
+    .o_workshop_dashboard_content {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 28px 32px;
+    }
+
+    .o_workshop_intro,
+    .o_workshop_section_heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+
+    h3 {
+        font-size: 19px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+
+    .o_workshop_intro p,
+    .o_workshop_section p {
+        color: #718096;
+        margin-bottom: 0;
+    }
+
+    .o_workshop_filters {
+        display: flex;
+        gap: 12px;
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 150px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #596579;
+        }
+
+        select,
+        .o_workshop_date_range_input {
+            min-height: 40px;
+            border-color: #dce2ea;
+            background-color: white;
+        }
+
+        .o_workshop_date_range_input {
+            color: #35445a;
+            text-align: left;
+            white-space: nowrap;
+        }
+    }
+
+    .o_workshop_date_range_filter {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 210px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #596579;
+    }
+
+    .o_workshop_stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 28px;
+    }
+
+    .o_workshop_stat_card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 22px;
+        background: white;
+        border: 1px solid #e5eaf0;
+        border-radius: 12px;
+
+        > span {
+            color: #647187;
+            font-size: 14px;
+        }
+
+        > strong {
+            font-size: 32px;
+            line-height: 1.1;
+        }
+
+        > small {
+            color: #8290a3;
+        }
+    }
+
+    .o_workshop_stat_icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        font-size: 19px;
+
+        &.blue {
+            color: #3869a8;
+            background: #e8f0fc;
+        }
+
+        &.amber {
+            color: #a56b12;
+            background: #fff3d9;
+        }
+
+        &.green {
+            color: #277c58;
+            background: #e2f5eb;
+        }
+
+        &.red {
+            color: #b54747;
+            background: #fbe9e9;
+        }
+    }
+
+    .o_workshop_section {
+        margin-top: 32px;
+        padding: 24px;
+        background: white;
+        border: 1px solid #e5eaf0;
+        border-radius: 12px;
+    }
+
+    .o_workshop_locations {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    .o_workshop_location_card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 18px;
+        border: 1px solid #e5eaf0;
+        border-radius: 10px;
+        background: #fff;
+        color: #35445a;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover,
+        &.active {
+            border-color: #7395c8;
+            background: #f4f8ff;
+        }
+
+        > span,
+        > small {
+            color: #718096;
+        }
+    }
+
+    .o_workshop_recent_orders {
+        display: flex;
+        flex-direction: column;
+        margin-top: 16px;
+    }
+
+    .o_workshop_recent_order {
+        display: grid;
+        grid-template-columns: minmax(220px, 2fr) minmax(130px, 1fr) 90px 130px;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 8px;
+        border: 0;
+        border-bottom: 1px solid #e5eaf0;
+        background: transparent;
+        color: #35445a;
+        text-align: left;
+        cursor: pointer;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        &:hover {
+            background: #f7f9fc;
+        }
+
+        small,
+        .o_workshop_recent_order_location,
+        .o_workshop_recent_order_state {
+            color: #718096;
+        }
+    }
+
+    .o_workshop_recent_order_main {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        > span {
+            color: #718096;
+            font-size: 13px;
+        }
+    }
+
+    .o_workshop_empty_state {
+        padding: 32px 16px 16px;
+        text-align: center;
+        color: #8290a3;
+
+        > i {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        h4 {
+            color: #35445a;
+            font-size: 16px;
+        }
+    }
+
+    .o_workshop_quick_actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+    }
+
+    .o_workshop_action_card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 9px;
+        padding: 20px;
+        border: 1px solid #e5eaf0;
+        border-radius: 10px;
+        background: #fff;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover {
+            border-color: #7395c8;
+            background: #f7f9fc;
+        }
+
+        > i {
+            font-size: 23px;
+            color: #436fb1;
+        }
+
+        > span {
+            font-weight: 600;
+        }
+
+        > small {
+            color: #8290a3;
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .o_workshop_dashboard .o_workshop_stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .o_workshop_dashboard .o_workshop_dashboard_header,
+    .o_workshop_dashboard .o_workshop_intro {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .o_workshop_dashboard .o_workshop_dashboard_content {
+        padding: 20px 14px;
+    }
+
+    .o_workshop_dashboard .o_workshop_filters,
+    .o_workshop_dashboard .o_workshop_quick_actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .o_workshop_dashboard .o_workshop_recent_order {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+    }
+
+    .o_workshop_dashboard .o_workshop_recent_order_location {
+        display: none;
+    }
+
+    .o_workshop_dashboard .o_workshop_stats {
+        grid-template-columns: 1fr;
+    }
+}

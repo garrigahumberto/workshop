@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_workshop_dashboard" model="ir.actions.client">
+        <field name="name">Inicio</field>
+        <field name="tag">workshop_service.dashboard</field>
+    </record>
+
+    <record id="menu_workshop_root" model="ir.ui.menu">
+        <field name="action" ref="action_workshop_dashboard"/>
+    </record>
+</odoo>
